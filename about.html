@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Про нас | OSINT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #030305;
+            --text-main: #fcfcfd;
+            --text-muted: #9ba1a6;
+            --brand-gradient: linear-gradient(135deg, #0048bd, #2f71da, #cc21c3, #641aa1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; min-height: 100vh; overflow: hidden;}
+
+        /* Фон */
+        .bg-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; }
+        .orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.6; }
+        .orb-1 { width: 40vw; height: 40vw; background: #0048bd; top: 10%; left: -10%; }
+        .orb-2 { width: 30vw; height: 30vw; background: #cc21c3; bottom: 10%; right: 10%; }
+
+        header {
+            width: 100%; display: flex; justify-content: space-between; align-items: center; 
+            padding: 40px 60px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; z-index: 10;
+        }
+        .logo-container { display: flex; align-items: center; gap: 15px; font-weight: 700; font-size: 18px; letter-spacing: 5px; text-decoration: none; color: #fff;}
+        .logo-icon { width: 20px; height: 20px; background: var(--brand-gradient); border-radius: 10px; transform: rotate(15deg); }
+        nav { display: flex; gap: 40px; }
+        nav a { color: var(--text-muted); text-decoration: none; padding-bottom: 5px; transition: 0.3s; }
+        nav a:hover { color: #fff; }
+        nav a.active { color: #fff; border-bottom: 2px solid #cc21c3; }
+
+        /* Центрована картка */
+        .about-section {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 60px;
+            max-width: 700px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+        }
+
+        .glass-panel h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glass-panel p {
+            font-size: 18px;
+            color: var(--text-muted);
+            line-height: 1.8;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-container">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <header>
+        <a href="index.html" class="logo-container">
+            <div class="logo-icon"></div>
+            O S I N T
+        </a>
+        <nav>
+            <a href="index.html">Головна</a>
+            <a href="about.html" class="active">Про нас</a>
+        </nav>
+    </header>
+
+    <main class="about-section">
+        <div class="glass-panel">
+            <h1>Ми — дослідники правди</h1>
+            <p>Наша спільнота об'єднує спеціалістів з розвідки на основі відкритих джерел (OSINT). Ми віримо, що в епоху цифрових технологій кожна інформація залишає свій слід. Наша мета — навчити вас аналізувати ці сліди, безпечно працювати з даними та знаходити істину серед нескінченного потоку інформації.</p>
+        </div>
+    </main>
+
+</body>
+</html>

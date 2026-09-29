@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дізнатися більше | OSINT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Базові стилі з index.html */
+        :root {
+            --bg-color: #030305;
+            --text-main: #fcfcfd;
+            --text-muted: #9ba1a6;
+            --brand-gradient: linear-gradient(135deg, #0048bd, #2f71da, #cc21c3, #641aa1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Outfit', sans-serif; height: 100vh; overflow: hidden; }
+
+        header {
+            position: fixed; top: 0; width: 100%; z-index: 20; display: flex; justify-content: space-between;
+            align-items: center; padding: 20px 40px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+            background: rgba(3, 3, 5, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .logo-container { display: flex; align-items: center; gap: 15px; font-weight: 700; font-size: 18px; letter-spacing: 5px; text-decoration: none; color: #fff;}
+        .logo-icon { width: 20px; height: 20px; background: var(--brand-gradient); border-radius: 10px; box-shadow: 0 0 20px rgba(100, 26, 161, 0.6); transform: rotate(15deg); }
+
+        /* Макет для сторінки дізнатися більше */
+        .content-layout {
+            display: flex;
+            height: 100vh;
+            padding-top: 70px; /* Відступ на висоту шапки */
+        }
+
+        /* Ліва панель зі списком */
+        .post-sidebar {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.02);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 30px 20px;
+            overflow-y: auto;
+        }
+
+        .post-item {
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-muted);
+            border: 1px solid transparent;
+        }
+
+        .post-item:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+        
+        .post-item.active {
+            background: rgba(100, 26, 161, 0.15);
+            border-color: rgba(100, 26, 161, 0.4);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Права панель з контентом */
+        .post-content-area {
+            flex-grow: 1;
+            padding: 50px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .content-box {
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-box h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .content-box img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .content-box p {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo-container">
+            <div class="logo-icon"></div>
+            O S I N T
+        </a>
+    </header>
+
+    <div class="content-layout">
+        <!-- Ліва частина -->
+        <div class="post-sidebar">
+            <div class="post-item active" onclick="loadPost(0)">01. Аналіз метаданих (EXIF)</div>
+            <div class="post-item" onclick="loadPost(1)">02. Геолокація за фото</div>
+            <div class="post-item" onclick="loadPost(2)">03. Перевірка фейкових новин</div>
+        </div>
+
+        <!-- Права частина -->
+        <div class="post-content-area">
+            <div class="content-box" id="post-display">
+                <!-- Контент буде завантажено через JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // База даних дописів
+        const posts = [
+            {
+                title: "Аналіз метаданих (EXIF)",
+                image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                content: "<p>Кожна фотографія, зроблена на цифровий пристрій, містить приховану інформацію, яка називається EXIF-даними. Ці дані можуть включати модель камери, дату та час зйомки, параметри експозиції, і що найважливіше — точні GPS-координати.</p><p>Для вилучення цієї інформації спеціалісти з OSINT використовують спеціальні утиліти (наприклад, ExifTool). Важливо розуміти, що більшість соціальних мереж автоматично видаляють ці дані під час завантаження фотографії, щоб захистити приватність користувачів. Проте, якщо ви отримали оригінальний файл електронною поштою або через месенджери у вигляді документа, метадані часто зберігаються неушкодженими.</p>"
+            },
+            {
+                title: "Геолокація за фото",
+                image: "https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                content: "<p>Геолокація — це мистецтво визначення точного місця зйомки за візуальними підказками на фотографії або відео. Якщо метадані були видалені, детективу доводиться покладатися виключно на свої очі та відкриті мапи (наприклад, Google Street View, Google Earth).</p><p>До уваги береться все: дорожні знаки, номерні знаки автомобілів, специфічна архітектура будівель, рекламні білборди, і навіть напрямок тіней для визначення часу доби та сторони світу. Процес вимагає терпіння та методичного підходу, але дозволяє знаходити локації з точністю до метра (м).</p>"
+            },
+            {
+                title: "Перевірка фейкових новин",
+                image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                content: "<p>У світі інформаційних війн вміння відрізняти правду від маніпуляцій є критично важливим. Фактчекінг включає зворотний пошук зображень (щоб дізнатися, чи не використовувалося фото у старих новинах), аналіз першоджерел та перевірку цитат.</p><p>Зворотний пошук виконується через такі сервіси, як Google Images, TinEye, або Yandex Images. Крім того, аналізується контекст відеоматеріалів: чи відповідає погода в кадрі погодним умовам на той день у заявленому регіоні, чи збігаються мова та акцент учасників подій з місцевим колоритом.</p>"
+            }
+        ];
+
+        function loadPost(index) {
+            // Оновлюємо активний клас у меню
+            const items = document.querySelectorAll('.post-item');
+            items.forEach(item => item.classList.remove('active'));
+            items[index].classList.add('active');
+
+            // Оновлюємо контент
+            const display = document.getElementById('post-display');
+            const post = posts[index];
+            
+            display.innerHTML = `
+                <h2>${post.title}</h2>
+                <img src="${post.image}" alt="${post.title}">
+                ${post.content}
+            `;
+        }
+
+        // Завантажуємо перший допис при відкритті сторінки
+        loadPost(0);
+    </script>
+</body>
+</html>
