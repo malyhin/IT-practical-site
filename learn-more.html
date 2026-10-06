@@ -3,169 +3,485 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Дізнатися більше | OSINT</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>База знань OSINT | Дізнатися більше</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Базові стилі з index.html */
         :root {
             --bg-color: #030305;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --card-hover: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.08);
             --text-main: #fcfcfd;
             --text-muted: #9ba1a6;
             --brand-gradient: linear-gradient(135deg, #0048bd, #2f71da, #cc21c3, #641aa1);
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Outfit', sans-serif; height: 100vh; overflow: hidden; }
 
-        header {
-            position: fixed; top: 0; width: 100%; z-index: 20; display: flex; justify-content: space-between;
-            align-items: center; padding: 20px 40px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
-            background: rgba(3, 3, 5, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05);
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
-        .logo-container { display: flex; align-items: center; gap: 15px; font-weight: 700; font-size: 18px; letter-spacing: 5px; text-decoration: none; color: #fff;}
-        .logo-icon { width: 20px; height: 20px; background: var(--brand-gradient); border-radius: 10px; box-shadow: 0 0 20px rgba(100, 26, 161, 0.6); transform: rotate(15deg); }
 
-        /* Макет для сторінки дізнатися більше */
+        /* Фонові орби для атмосфери */
+        .bg-container {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; overflow: hidden; pointer-events: none;
+        }
+        .orb {
+            position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.4;
+        }
+        .orb-1 { width: 40vw; height: 40vw; background: #0048bd; top: -10%; left: -10%; }
+        .orb-2 { width: 35vw; height: 35vw; background: #cc21c3; bottom: -10%; right: -10%; }
+
+        /* Шапка */
+        header {
+            height: 70px;
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 0 40px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+            background: rgba(3, 3, 5, 0.85); backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 20;
+            flex-shrink: 0;
+        }
+        .logo-container { display: flex; align-items: center; gap: 15px; font-weight: 700; font-size: 18px; letter-spacing: 5px; text-decoration: none; color: #fff; }
+        .logo-icon { width: 20px; height: 20px; background: var(--brand-gradient); border-radius: 6px; box-shadow: 0 0 15px rgba(100, 26, 161, 0.6); transform: rotate(15deg); }
+        
+        .back-link {
+            color: var(--text-muted); text-decoration: none; transition: 0.3s; display: flex; align-items: center; gap: 8px;
+        }
+        .back-link:hover { color: #fff; }
+
+        /* Основний макет (спліт-скрін) */
         .content-layout {
             display: flex;
-            height: 100vh;
-            padding-top: 70px; /* Відступ на висоту шапки */
+            flex-grow: 1;
+            height: calc(100vh - 70px);
+            overflow: hidden;
         }
 
-        /* Ліва панель зі списком */
+        /* Ліва панель (Список + Пошук) */
         .post-sidebar {
-            width: 300px;
-            background: rgba(255, 255, 255, 0.02);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 30px 20px;
+            width: 380px;
+            background: rgba(10, 10, 15, 0.6);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .search-box {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 12px 18px;
+            border-radius: 12px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+        .search-input:focus { border-color: rgba(204, 33, 195, 0.6); background: rgba(255, 255, 255, 0.07); }
+
+        .posts-list {
             overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-grow: 1;
         }
 
         .post-item {
-            padding: 15px 20px;
-            margin-bottom: 10px;
-            border-radius: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 18px;
+            border-radius: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
-            color: var(--text-muted);
-            border: 1px solid transparent;
         }
 
-        .post-item:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+        .post-item:hover { background: var(--card-hover); border-color: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
         
         .post-item.active {
             background: rgba(100, 26, 161, 0.15);
-            border-color: rgba(100, 26, 161, 0.4);
-            color: #fff;
-            font-weight: 600;
+            border-color: rgba(204, 33, 195, 0.5);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
 
-        /* Права панель з контентом */
+        .post-meta-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .post-tag {
+            background: rgba(255,255,255,0.06);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            color: #d1d5db;
+        }
+
+        .post-item h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.4;
+        }
+
+        /* Права панель (Детальний контент) */
         .post-content-area {
             flex-grow: 1;
-            padding: 50px;
+            padding: 50px 60px;
             overflow-y: auto;
-            position: relative;
+            background: rgba(3, 3, 5, 0.3);
         }
 
         .content-box {
-            max-width: 800px;
+            max-width: 850px;
             margin: 0 auto;
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .article-header {
+            margin-bottom: 30px;
+        }
+
+        .article-category {
+            display: inline-block;
+            background: var(--brand-gradient);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 15px;
         }
 
         .content-box h2 {
-            font-size: 42px;
-            margin-bottom: 20px;
-            background: var(--brand-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 38px;
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .article-info-bar {
+            display: flex;
+            gap: 20px;
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-bottom: 30px;
+        }
+
+        .article-image-container {
+            position: relative;
+            margin-bottom: 35px;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
 
         .content-box img {
             width: 100%;
-            height: 400px;
+            height: 380px;
             object-fit: cover;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255,255,255,0.1);
+            display: block;
         }
 
-        .content-box p {
-            font-size: 18px;
+        .article-text p {
+            font-size: 17px;
             color: var(--text-muted);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             line-height: 1.8;
             font-weight: 300;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .article-text h3 {
+            font-size: 22px;
+            color: #fff;
+            margin: 35px 0 15px 0;
+            font-weight: 600;
+        }
+
+        /* Стильні картки інструментів усередині статті */
+        .tools-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-left: 4px solid #cc21c3;
+            padding: 25px;
+            border-radius: 0 16px 16px 0;
+            margin: 30px 0;
+        }
+
+        .tools-box h4 {
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tools-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tools-list li {
+            font-size: 15px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tools-list li::before {
+            content: '•';
+            color: #cc21c3;
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Скролбар */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
     </style>
 </head>
 <body>
 
+    <div class="bg-container">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
     <header>
         <a href="index.html" class="logo-container">
             <div class="logo-icon"></div>
-            O S I N T
+            O S I N T — База знань
         </a>
+        <a href="index.html" class="back-link">← На головну</a>
     </header>
 
     <div class="content-layout">
-        <!-- Ліва частина -->
+        <!-- Ліва панель -->
         <div class="post-sidebar">
-            <div class="post-item active" onclick="loadPost(0)">01. Аналіз метаданих (EXIF)</div>
-            <div class="post-item" onclick="loadPost(1)">02. Геолокація за фото</div>
-            <div class="post-item" onclick="loadPost(2)">03. Перевірка фейкових новин</div>
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="Пошук матеріалів..." onkeyup="filterPosts()">
+            </div>
+            <div class="posts-list" id="postsList">
+                <!-- Заповнюється автоматично через JavaScript -->
+            </div>
         </div>
 
-        <!-- Права частина -->
+        <!-- Права панель -->
         <div class="post-content-area">
-            <div class="content-box" id="post-display">
-                <!-- Контент буде завантажено через JS -->
+            <div class="content-box" id="postDisplay">
+                <!-- Контент активного допису -->
             </div>
         </div>
     </div>
 
     <script>
-        // База даних дописів
+        // Розширена база корисних матеріалів та інструментів
         const posts = [
             {
-                title: "Аналіз метаданих (EXIF)",
-                image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-                content: "<p>Кожна фотографія, зроблена на цифровий пристрій, містить приховану інформацію, яка називається EXIF-даними. Ці дані можуть включати модель камери, дату та час зйомки, параметри експозиції, і що найважливіше — точні GPS-координати.</p><p>Для вилучення цієї інформації спеціалісти з OSINT використовують спеціальні утиліти (наприклад, ExifTool). Важливо розуміти, що більшість соціальних мереж автоматично видаляють ці дані під час завантаження фотографії, щоб захистити приватність користувачів. Проте, якщо ви отримали оригінальний файл електронною поштою або через месенджери у вигляді документа, метадані часто зберігаються неушкодженими.</p>"
+                id: 0,
+                title: "Аналіз метаданих (EXIF) та цифрових слідів",
+                category: "Технічний OSINT",
+                readTime: "4 хв читання",
+                date: "Жовтень 2026",
+                image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1350&q=80",
+                intro: "Кожне цифрове зображення зберігає величезний масив прихованої технічної інформації, яка здатна розповісти більше, ніж сама фотографія.",
+                content: `
+                    <p>Коли ви робите знімок на смартфон або професійну камеру, файл записується у форматі JPEG або RAW і автоматично доповнюється EXIF-тегами. Для розвідки на основі відкритих джерел (OSINT) це золота жила.</p>
+                    <p>У метаданих часто містяться точні географічні координати (широта та довгота з точністю до метрів), модель пристрою, точний час зйомки за UTC, налаштування оптики та навіть унікальний серійний номер сенсора камери.</p>
+                    
+                    <h3>Поширені проблеми та нюанси</h3>
+                    <p>Популярні месенджери та соціальні мережі (Telegram, WhatsApp, Instagram, Facebook) під час надсилання або публікації фотографій автоматично стискають зображення та повністю видаляють EXIF-дані задля захисту приватності користувачів. Проте, якщо файл надіслано як «Документ» або електронною листом, оригінальні дані зазвичай залишаються недоторканими.</p>
+
+                    <div class="tools-box">
+                        <h4>Рекомендовані інструменти для роботи:</h4>
+                        <ul class="tools-list">
+                            <li><strong>ExifTool (Phil Harvey)</strong> — найпотужніша консольна утиліта для читання та редагування метаданих.</li>
+                            <li><strong>Jeffrey’s Image Metadata Viewer</strong> — зручний онлайн-сервіс для швидкої перевірки файлів прямо у браузері.</li>
+                            <li><strong>FotoForensics</strong> — інструмент для аналізу помилок рівня (ELA) з метою виявлення слідів монтажу в графічних редакторах.</li>
+                        </ul>
+                    </div>
+                `
             },
             {
-                title: "Геолокація за фото",
-                image: "https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-                content: "<p>Геолокація — це мистецтво визначення точного місця зйомки за візуальними підказками на фотографії або відео. Якщо метадані були видалені, детективу доводиться покладатися виключно на свої очі та відкриті мапи (наприклад, Google Street View, Google Earth).</p><p>До уваги береться все: дорожні знаки, номерні знаки автомобілів, специфічна архітектура будівель, рекламні білборди, і навіть напрямок тіней для визначення часу доби та сторони світу. Процес вимагає терпіння та методичного підходу, але дозволяє знаходити локації з точністю до метра (м).</p>"
+                id: 1,
+                title: "Мистецтво геолокації: Визначення точок за фото",
+                category: "Георозвідка",
+                readTime: "6 хв читання",
+                date: "Жовтень 2026",
+                image: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1350&q=80",
+                intro: "Як знайти точне місце зйомки кадру посеред великого міста або гірської місцевості, маючи лише візуальні орієнтири.",
+                content: `
+                    <p>Геолокація за відкритими джерелами — це поєднання логіки, дедукції та знання спеціалізованого софту. Коли цифрові координати відсутні, аналітик стає цифровим детективом.</p>
+                    <p>Процес починається з пошуку «якорів» — унікальних об'єктів на фоні: лінії електропередач особливої форми, силуети гірських хребтів, дорожні знаки, специфічні архітектурні елементи або назви магазинів на білбордах.</p>
+
+                    <h3>Основні етапи верифікації локації</h3>
+                    <p>1. <strong>Макро-орієнтири:</strong> Визначення регіону за кліматом, рослинністю, правилами дорожнього руху чи мовою на вивісках.<br>
+                    2. <strong>Мікро-орієнтири:</strong> Пошук точного ракурсу за допомогою панорамних знімків та супутникових мап високої деталізації.</p>
+
+                    <div class="tools-box">
+                        <h4>Корисні сервіси для георозвідки:</h4>
+                        <ul class="tools-list">
+                            <li><strong>Google Earth Pro</strong> — детальне 3D-моделювання міст і рельєфу місцевості.</li>
+                            <li><strong>SunCalc.org</strong> — аналіз положення сонця та довжини тіней для визначення точного часу зйомки або перевірки справжності відео.</li>
+                            <li><strong>PeakFinder</strong> — інструмент ідентифікації гірських вершин за панорамним профілем.</li>
+                        </ul>
+                    </div>
+                `
             },
             {
-                title: "Перевірка фейкових новин",
-                image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-                content: "<p>У світі інформаційних війн вміння відрізняти правду від маніпуляцій є критично важливим. Фактчекінг включає зворотний пошук зображень (щоб дізнатися, чи не використовувалося фото у старих новинах), аналіз першоджерел та перевірку цитат.</p><p>Зворотний пошук виконується через такі сервіси, як Google Images, TinEye, або Yandex Images. Крім того, аналізується контекст відеоматеріалів: чи відповідає погода в кадрі погодним умовам на той день у заявленому регіоні, чи збігаються мова та акцент учасників подій з місцевим колоритом.</p>"
+                id: 2,
+                title: "OSINT нікнеймів та пошук цифрового сліду",
+                category: "Цифрова ідентичність",
+                readTime: "5 хв читання",
+                date: "Вересень 2026",
+                image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1350&q=80",
+                intro: "Методи перевірки присутності людини в різних соціальних мережах за допомогою унікальних логінів та імен користувачів.",
+                content: `
+                    <p>Більшість людей використовують однакові або схожі нікнейми (username) на різних платформах: у месенджерах, на форумах, у професійних мережах чи ігрових сервісах. Це дозволяє зв'язати різні профілі в єдине цифрове досьє.</p>
+                    <p>Автоматизація такого пошуку зекономить години ручної роботи, перевіряючи сотні популярних сайтів за кілька секунд.</p>
+
+                    <div class="tools-box">
+                        <h4>Програмне забезпечення для аналізу:</h4>
+                        <ul class="tools-list">
+                            <li><strong>Sherlock</strong> — відкрита командна утиліта для пошуку аккаунтів за нікнеймом на більш ніж 400 сайтах.</li>
+                            <li><strong>WhatsMyName</strong> — веб-платформа для швидкої крос-платформенної перевірки імен користувачів.</li>
+                            <li><strong>Maltego</strong> — професійний комплекс для візуального зв'язування даних та побудови графів зв'язків.</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: 3,
+                title: "Фактчекінг та спростування дезінформації",
+                category: "Медіаграмотність",
+                readTime: "5 хв читання",
+                date: "Вересень 2026",
+                image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1350&q=80",
+                intro: "Як боротися з маніпуляціями в медіа, виявляти фейкові відеоматеріали та перевіряти першоджерела новин.",
+                content: `
+                    <p>В умовах інформаційного шуму та швидкого поширення контенту навички критичного мислення та верифікації фактів є обов'язковими для кожного спеціаліста.</p>
+                    <p>Зворотний пошук зображень дозволяє дізнатися, коли фотографія з'явилася в мережі вперше. Часто «свіжа» кричуща новина виявляється репостом події п'ятирічної давнини з іншої країни.</p>
+
+                    <div class="tools-box">
+                        <h4>Інструменти перевірки медіа:</h4>
+                        <ul class="tools-list">
+                            <li><strong>Google Lens / Reverse Search</strong> — базовий пошук схожих зображень та об'єктів.</li>
+                            <li><strong>TinEye</strong> — пошукова система по зображеннях, яка спеціалізується на знаходженні першоджерел фото.</li>
+                            <li><strong>InVID Verification Plugin</strong> — зручне розширення для браузера, створене для аналізу та розкадрування підозрілих відеороликів.</li>
+                        </ul>
+                    </div>
+                `
             }
         ];
 
-        function loadPost(index) {
-            // Оновлюємо активний клас у меню
-            const items = document.querySelectorAll('.post-item');
-            items.forEach(item => item.classList.remove('active'));
-            items[index].classList.add('active');
+        // Рендер списку постів
+        function renderPosts(itemsToRender) {
+            const listContainer = document.getElementById('postsList');
+            listContainer.innerHTML = '';
 
-            // Оновлюємо контент
-            const display = document.getElementById('post-display');
-            const post = posts[index];
-            
-            display.innerHTML = `
-                <h2>${post.title}</h2>
-                <img src="${post.image}" alt="${post.title}">
-                ${post.content}
-            `;
+            if (itemsToRender.length === 0) {
+                listContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 20px;">Нічого не знайдено</p>';
+                return;
+            }
+
+            itemsToRender.forEach(post => {
+                const div = document.createElement('div');
+                div.className = `post-item ${post.id === currentPostId ? 'active' : ''}`;
+                div.onclick = () => selectPost(post.id);
+                div.innerHTML = `
+                    <div class="post-meta-info">
+                        <span>${post.date}</span>
+                        <span class="post-tag">${post.category}</span>
+                    </div>
+                    <h4>${post.title}</h4>
+                `;
+                listContainer.appendChild(div);
+            });
         }
 
-        // Завантажуємо перший допис при відкритті сторінки
-        loadPost(0);
+        let currentPostId = 0;
+
+        function selectPost(id) {
+            currentPostId = id;
+            const post = posts.find(p => p.id === id);
+            
+            // Оновлюємо підсвітку в списку
+            renderPosts(posts);
+            const searchInputVal = document.getElementById('searchInput').value;
+            if(searchInputVal) filterPosts(); // Зберігаємо фільтр при кліку
+
+            // Відображаємо контент
+            const display = document.getElementById('postDisplay');
+            display.innerHTML = `
+                <div class="article-header">
+                    <span class="article-category">${post.category}</span>
+                    <h2>${post.title}</h2>
+                    <div class="article-info-bar">
+                        <span>📅 ${post.date}</span>
+                        <span>⏱️ ${post.readTime}</span>
+                    </div>
+                </div>
+                <div class="article-image-container">
+                    <img src="${post.image}" alt="${post.title}">
+                </div>
+                <div class="article-text">
+                    <p><strong>${post.intro}</strong></p>
+                    ${post.content}
+                </div>
+            `;
+            display.scrollTop = 0;
+        }
+
+        function filterPosts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = posts.filter(p => 
+                p.title.toLowerCase().includes(query) || 
+                p.category.toLowerCase().includes(query) ||
+                p.intro.toLowerCase().includes(query)
+            );
+            renderPosts(filtered);
+        }
+
+        // Ініціалізація сторінки при завантаженні
+        renderPosts(posts);
+        selectPost(0);
     </script>
 </body>
 </html>
