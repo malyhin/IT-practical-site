@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>База знань OSINT | 12 матеріалів</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,6 +18,7 @@
             --text-muted: #9ba1a6;
             --brand-gradient: linear-gradient(135deg, #0048bd, #2f71da, #cc21c3, #641aa1);
             --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+            --header-height: 68px;
             --sidebar-width: 370px;
             --peek-width: 56px;
             --grain-svg: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -30,6 +31,7 @@
             color: var(--text-main);
             font-family: 'Outfit', sans-serif;
             height: 100vh;
+            height: 100dvh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -61,39 +63,77 @@
             filter: blur(110px);
             opacity: 0.38;
         }
-        .orb-1 { width: 40vw; height: 40vw; background: #0048bd; top: -10%; left: -10%; }
-        .orb-2 { width: 35vw; height: 35vw; background: #cc21c3; bottom: -10%; right: -10%; }
+        .orb-1 { width: clamp(240px, 40vw, 600px); height: clamp(240px, 40vw, 600px); background: #0048bd; top: -10%; left: -10%; }
+        .orb-2 { width: clamp(220px, 35vw, 550px); height: clamp(220px, 35vw, 550px); background: #cc21c3; bottom: -10%; right: -10%; }
 
         /* Шапка */
         header {
-            height: 70px;
+            height: calc(var(--header-height) + env(safe-area-inset-top));
+            padding-top: env(safe-area-inset-top);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 36px;
+            gap: 12px;
+            padding-left: clamp(16px, 3vw, 36px);
+            padding-right: clamp(16px, 3vw, 36px);
             font-size: 12px;
-            letter-spacing: 0.16em;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
-            background: rgba(3, 3, 5, 0.86);
+            background: rgba(3, 3, 5, 0.88);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-color);
-            z-index: 25;
+            z-index: 35;
             flex-shrink: 0;
         }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .topics-toggle-btn {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            min-height: 38px;
+            padding: 8px 13px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background-color 180ms var(--ease-out), border-color 180ms var(--ease-out);
+        }
+        .topics-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.09);
+            border-color: rgba(204, 33, 195, 0.5);
+        }
+
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
             font-weight: 700;
-            font-size: 17px;
-            letter-spacing: 0.24em;
+            font-size: clamp(14px, 2vw, 17px);
+            letter-spacing: 0.2em;
             text-decoration: none;
             color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .logo-icon {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             background: var(--brand-gradient);
             border-radius: 6px;
             box-shadow: 0 0 15px rgba(100, 26, 161, 0.6);
@@ -104,26 +144,30 @@
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: clamp(10px, 2vw, 18px);
+            flex-shrink: 0;
         }
 
         .counter-badge {
             font-variant-numeric: tabular-nums;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-color);
-            padding: 6px 12px;
+            padding: 6px 11px;
             border-radius: 999px;
             color: var(--text-muted);
             font-size: 11px;
+            white-space: nowrap;
         }
 
         .back-link {
             color: var(--text-muted);
             text-decoration: none;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            min-height: 38px;
             transition: color 180ms var(--ease-out);
+            white-space: nowrap;
         }
         .back-link:hover { color: #fff; }
 
@@ -132,36 +176,54 @@
             position: relative;
             display: flex;
             flex-grow: 1;
-            height: calc(100vh - 70px);
+            height: calc(100dvh - var(--header-height) - env(safe-area-inset-top));
             overflow: hidden;
         }
 
-        /* ЧАСТКОВО ПРИХОВАНЕ ЛІВЕ МЕНЮ (Peek Rail + GPU Slide) */
+        .drawer-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 2, 5, 0.72);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 38;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 240ms var(--ease-out);
+        }
+        .drawer-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Ліва панель матеріалів */
         .post-sidebar {
             position: fixed;
-            top: 70px;
+            top: calc(var(--header-height) + env(safe-area-inset-top));
             left: 0;
             width: var(--sidebar-width);
             max-width: 92vw;
-            height: calc(100vh - 70px);
-            background: rgba(9, 9, 14, 0.94);
+            height: calc(100dvh - var(--header-height) - env(safe-area-inset-top));
+            background: rgba(9, 9, 14, 0.96);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 16px 0 48px rgba(0, 0, 0, 0.55);
-            z-index: 20;
+            z-index: 40;
             display: flex;
             transform: translateX(calc(-100% + var(--peek-width)));
             transition: transform 280ms var(--ease-out), border-color 200ms var(--ease-out);
             will-change: transform;
         }
 
-        /* Відкривається при наведенні, фокусі всередині або закріпленні */
-        .post-sidebar:hover,
-        .post-sidebar:focus-within,
-        .post-sidebar.pinned {
-            transform: translateX(0);
-            border-right-color: rgba(204, 33, 195, 0.35);
+        @media (min-width: 901px) {
+            .post-sidebar:hover,
+            .post-sidebar:focus-within,
+            .post-sidebar.pinned {
+                transform: translateX(0);
+                border-right-color: rgba(204, 33, 195, 0.35);
+            }
         }
 
         .sidebar-main-col {
@@ -172,8 +234,34 @@
             overflow: hidden;
         }
 
+        .mobile-drawer-header {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 18px 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .mobile-drawer-header span {
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        .drawer-close-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            font-size: 20px;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+        }
+
         .search-box {
-            padding: 16px 18px;
+            padding: 14px 16px;
             border-bottom: 1px solid var(--border-color);
         }
 
@@ -181,13 +269,16 @@
             width: 100%;
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border-color);
-            padding: 11px 15px;
+            padding: 11px 14px;
             border-radius: 10px;
             color: #fff;
             font-family: inherit;
-            font-size: 14px;
+            font-size: 16px;
             outline: none;
             transition: border-color 180ms var(--ease-out), background-color 180ms var(--ease-out);
+        }
+        @media (min-width: 901px) {
+            .search-input { font-size: 14px; }
         }
         .search-input:focus {
             border-color: rgba(204, 33, 195, 0.65);
@@ -196,7 +287,8 @@
 
         .posts-list {
             overflow-y: auto;
-            padding: 14px 16px 24px;
+            -webkit-overflow-scrolling: touch;
+            padding: 12px 16px calc(24px + env(safe-area-inset-bottom));
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -254,7 +346,7 @@
             line-height: 1.38;
         }
 
-        /* Видима смужка-напрямна праворуч у боковій панелі (56px) */
+        /* Видима смужка-напрямна на десктопі */
         .sidebar-peek-rail {
             width: var(--peek-width);
             height: 100%;
@@ -287,7 +379,6 @@
             background: rgba(255, 255, 255, 0.09);
             border-color: rgba(255, 255, 255, 0.22);
         }
-        .pin-btn:active { transform: scale(0.95); }
         .post-sidebar.pinned .pin-btn {
             background: rgba(204, 33, 195, 0.22);
             border-color: rgba(204, 33, 195, 0.6);
@@ -317,24 +408,24 @@
             font-weight: 500;
             font-variant-numeric: tabular-nums;
             cursor: pointer;
-            transition: background-color 160ms var(--ease-out), color 160ms var(--ease-out), border-color 160ms var(--ease-out), transform 140ms var(--ease-out);
+            transition: background-color 160ms var(--ease-out), color 160ms var(--ease-out);
         }
         .rail-dot:hover {
             color: #fff;
             background: rgba(255, 255, 255, 0.08);
         }
-        .rail-dot:active { transform: scale(0.94); }
         .rail-dot.active {
             background: var(--brand-gradient);
             color: #fff;
             font-weight: 600;
         }
 
-        /* Права область читання (зручна ширина завдяки прихованому меню) */
+        /* Права область читання */
         .post-content-area {
             flex-grow: 1;
-            padding: 48px 48px 80px calc(var(--peek-width) + 48px);
+            padding: clamp(24px, 4vw, 48px) clamp(18px, 4vw, 48px) calc(72px + env(safe-area-inset-bottom)) calc(var(--peek-width) + clamp(20px, 4vw, 48px));
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             background: rgba(3, 3, 5, 0.28);
             transition: padding-left 280ms var(--ease-out);
         }
@@ -349,7 +440,7 @@
             animation: contentEnter 240ms var(--ease-out);
         }
 
-        .article-header { margin-bottom: 28px; }
+        .article-header { margin-bottom: 24px; }
 
         .article-category {
             display: inline-block;
@@ -361,42 +452,42 @@
             letter-spacing: 0.12em;
             padding: 5px 13px;
             border-radius: 999px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .content-box h2 {
-            font-size: clamp(28px, 3.4vw, 38px);
+            font-size: clamp(24px, 4vw, 38px);
             font-weight: 600;
             letter-spacing: -0.02em;
-            line-height: 1.18;
-            margin-bottom: 14px;
+            line-height: 1.2;
+            margin-bottom: 12px;
             color: #fff;
         }
 
         .article-info-bar {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 10px 16px;
             color: var(--text-muted);
             font-size: 13px;
             font-variant-numeric: tabular-nums;
-            margin-bottom: 26px;
+            margin-bottom: 22px;
         }
 
         .article-image-container {
             position: relative;
-            margin-bottom: 32px;
-            border-radius: 18px;
+            margin-bottom: 28px;
+            border-radius: 16px;
             overflow: hidden;
             border: 1px solid var(--border-color);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.48);
             background: linear-gradient(135deg, rgba(0, 72, 189, 0.25), rgba(100, 26, 161, 0.25));
-            min-height: 220px;
+            min-height: 180px;
         }
 
         .content-box img {
             width: 100%;
-            height: 340px;
+            height: clamp(190px, 34vw, 340px);
             object-fit: cover;
             display: block;
         }
@@ -406,10 +497,10 @@
         }
 
         .article-text p {
-            font-size: 17px;
+            font-size: clamp(16px, 2.1vw, 17px);
             color: var(--text-muted);
-            margin-bottom: 22px;
-            line-height: 1.78;
+            margin-bottom: 20px;
+            line-height: 1.75;
             font-weight: 300;
         }
 
@@ -419,10 +510,10 @@
         }
 
         .article-text h3 {
-            font-size: 21px;
+            font-size: clamp(19px, 2.5vw, 21px);
             letter-spacing: -0.01em;
             color: #fff;
-            margin: 32px 0 14px;
+            margin: 28px 0 12px;
             font-weight: 600;
         }
 
@@ -430,9 +521,9 @@
             background: rgba(255, 255, 255, 0.025);
             border: 1px solid rgba(255, 255, 255, 0.07);
             border-left: 3px solid #cc21c3;
-            padding: 22px 24px;
+            padding: clamp(18px, 3vw, 24px);
             border-radius: 0 14px 14px 0;
-            margin: 28px 0;
+            margin: 24px 0;
         }
 
         .tools-box h4 {
@@ -446,7 +537,7 @@
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 9px;
+            gap: 10px;
         }
 
         .tools-list li {
@@ -471,9 +562,9 @@
         .article-nav-footer {
             display: flex;
             justify-content: space-between;
-            gap: 16px;
-            margin-top: 40px;
-            padding-top: 24px;
+            gap: 12px;
+            margin-top: 36px;
+            padding-top: 22px;
             border-top: 1px solid var(--border-color);
             max-width: 65ch;
         }
@@ -483,6 +574,7 @@
             border: 1px solid var(--border-color);
             color: var(--text-main);
             padding: 12px 18px;
+            min-height: 46px;
             border-radius: 12px;
             font-family: inherit;
             font-size: 13px;
@@ -511,12 +603,54 @@
             }
         }
 
+        /* Планшети та смартфони (≤ 900px): повноекранна висувна панель замість hover-рейки */
         @media (max-width: 900px) {
-            .content-layout.sidebar-pinned .post-content-area {
-                padding-left: calc(var(--peek-width) + 24px);
+            .topics-toggle-btn {
+                display: inline-flex;
             }
-            .post-content-area {
-                padding: 32px 24px 64px calc(var(--peek-width) + 24px);
+            .brand-subtitle {
+                display: none;
+            }
+            .drawer-overlay {
+                display: block;
+            }
+            .post-sidebar {
+                top: 0;
+                height: 100vh;
+                height: 100dvh;
+                width: min(380px, 88vw);
+                transform: translateX(-100%);
+                padding-top: env(safe-area-inset-top);
+                z-index: 45;
+            }
+            .post-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            .sidebar-peek-rail {
+                display: none;
+            }
+            .sidebar-main-col {
+                width: 100%;
+            }
+            .mobile-drawer-header {
+                display: flex;
+            }
+            .post-content-area,
+            .content-layout.sidebar-pinned .post-content-area {
+                padding: 24px 20px calc(68px + env(safe-area-inset-bottom));
+            }
+        }
+
+        @media (max-width: 540px) {
+            .back-text {
+                display: none;
+            }
+            .article-nav-footer {
+                flex-direction: column;
+            }
+            .nav-step-btn {
+                width: 100%;
+                justify-content: center;
             }
         }
 
@@ -535,27 +669,38 @@
     </div>
 
     <header>
-        <a href="index.html" class="logo-container">
-            <div class="logo-icon"></div>
-            O S I N T — База знань
-        </a>
+        <div class="header-left">
+            <button type="button" class="topics-toggle-btn" id="topicsToggleBtn" aria-expanded="false" aria-controls="postSidebar">
+                ☰ Теми
+            </button>
+            <a href="index.html" class="logo-container">
+                <div class="logo-icon"></div>
+                <span>O S I N T<span class="brand-subtitle"> — База знань</span></span>
+            </a>
+        </div>
         <div class="header-actions">
             <span class="counter-badge" id="topicCounter">01 / 12</span>
-            <a href="index.html" class="back-link">← На головну</a>
+            <a href="index.html" class="back-link" aria-label="На головну">← <span class="back-text">На головну</span></a>
         </div>
     </header>
 
     <div class="content-layout" id="contentLayout">
-        <!-- Частково прихована ліва панель -->
+        <div class="drawer-overlay" id="drawerOverlay"></div>
+
+        <!-- Ліва панель матеріалів -->
         <aside class="post-sidebar" id="postSidebar" aria-label="Список навчальних матеріалів">
             <div class="sidebar-main-col">
+                <div class="mobile-drawer-header">
+                    <span>12 модулів OSINT</span>
+                    <button type="button" class="drawer-close-btn" id="drawerCloseBtn" aria-label="Закрити список тем">&times;</button>
+                </div>
                 <div class="search-box">
                     <input type="text" id="searchInput" class="search-input" placeholder="Пошук серед 12 матеріалів..." oninput="filterPosts()">
                 </div>
                 <div class="posts-list" id="postsList"></div>
             </div>
 
-            <!-- Видима смужка з номерами тем та кнопкою закріплення -->
+            <!-- Видима смужка з номерами тем та кнопкою закріплення (десктоп) -->
             <div class="sidebar-peek-rail">
                 <button type="button" class="pin-btn" id="pinBtn" title="Закріпити або згорнути меню" aria-label="Закріпити меню">⇄</button>
                 <div class="rail-numbers" id="railNumbers"></div>
@@ -837,6 +982,28 @@
         const sidebarEl = document.getElementById('postSidebar');
         const layoutEl = document.getElementById('contentLayout');
         const pinBtn = document.getElementById('pinBtn');
+        const topicsToggleBtn = document.getElementById('topicsToggleBtn');
+        const drawerCloseBtn = document.getElementById('drawerCloseBtn');
+        const drawerOverlay = document.getElementById('drawerOverlay');
+
+        function setMobileDrawer(isOpen) {
+            sidebarEl.classList.toggle('mobile-open', isOpen);
+            drawerOverlay.classList.toggle('active', isOpen);
+            topicsToggleBtn.setAttribute('aria-expanded', String(isOpen));
+        }
+
+        topicsToggleBtn.addEventListener('click', () => {
+            const isOpen = !sidebarEl.classList.contains('mobile-open');
+            setMobileDrawer(isOpen);
+        });
+        drawerCloseBtn.addEventListener('click', () => setMobileDrawer(false));
+        drawerOverlay.addEventListener('click', () => setMobileDrawer(false));
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebarEl.classList.contains('mobile-open')) {
+                setMobileDrawer(false);
+            }
+        });
 
         pinBtn.addEventListener('click', () => {
             const isPinned = sidebarEl.classList.toggle('pinned');
@@ -870,7 +1037,10 @@
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = `post-item ${post.id === currentPostId ? 'active' : ''}`;
-                btn.onclick = () => selectPost(post.id);
+                btn.onclick = () => {
+                    selectPost(post.id);
+                    setMobileDrawer(false);
+                };
                 btn.innerHTML = `
                     <div class="post-meta-info">
                         <span>${String(post.id + 1).padStart(2, '0')} · ${post.date}</span>
