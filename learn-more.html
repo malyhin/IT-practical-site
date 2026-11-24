@@ -3,18 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>База знань OSINT | Дізнатися більше</title>
+    <title>База знань OSINT | 12 матеріалів</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             --bg-color: #030305;
-            --card-bg: rgba(255, 255, 255, 0.02);
-            --card-hover: rgba(255, 255, 255, 0.05);
+            --card-bg: rgba(255, 255, 255, 0.025);
+            --card-hover: rgba(255, 255, 255, 0.06);
             --border-color: rgba(255, 255, 255, 0.08);
             --text-main: #fcfcfd;
             --text-muted: #9ba1a6;
             --brand-gradient: linear-gradient(135deg, #0048bd, #2f71da, #cc21c3, #641aa1);
+            --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+            --sidebar-width: 370px;
+            --peek-width: 56px;
+            --grain-svg: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -27,15 +33,33 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Фонові орби для атмосфери */
+        .grain-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.06;
+            mix-blend-mode: overlay;
+            background-image: var(--grain-svg);
+            background-repeat: repeat;
+            background-size: 160px 160px;
+        }
+
         .bg-container {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: -1; overflow: hidden; pointer-events: none;
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
         }
         .orb {
-            position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.4;
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(110px);
+            opacity: 0.38;
         }
         .orb-1 { width: 40vw; height: 40vw; background: #0048bd; top: -10%; left: -10%; }
         .orb-2 { width: 35vw; height: 35vw; background: #cc21c3; bottom: -10%; right: -10%; }
@@ -43,41 +67,113 @@
         /* Шапка */
         header {
             height: 70px;
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 0 40px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
-            background: rgba(3, 3, 5, 0.85); backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 36px;
+            font-size: 12px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            background: rgba(3, 3, 5, 0.86);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-color);
-            z-index: 20;
+            z-index: 25;
             flex-shrink: 0;
         }
-        .logo-container { display: flex; align-items: center; gap: 15px; font-weight: 700; font-size: 18px; letter-spacing: 5px; text-decoration: none; color: #fff; }
-        .logo-icon { width: 20px; height: 20px; background: var(--brand-gradient); border-radius: 6px; box-shadow: 0 0 15px rgba(100, 26, 161, 0.6); transform: rotate(15deg); }
-        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-weight: 700;
+            font-size: 17px;
+            letter-spacing: 0.24em;
+            text-decoration: none;
+            color: #fff;
+        }
+        .logo-icon {
+            width: 20px;
+            height: 20px;
+            background: var(--brand-gradient);
+            border-radius: 6px;
+            box-shadow: 0 0 15px rgba(100, 26, 161, 0.6);
+            transform: rotate(15deg);
+            flex-shrink: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .counter-badge {
+            font-variant-numeric: tabular-nums;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 999px;
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
         .back-link {
-            color: var(--text-muted); text-decoration: none; transition: 0.3s; display: flex; align-items: center; gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 180ms var(--ease-out);
         }
         .back-link:hover { color: #fff; }
 
-        /* Основний макет (спліт-скрін) */
+        /* Основний макет */
         .content-layout {
+            position: relative;
             display: flex;
             flex-grow: 1;
             height: calc(100vh - 70px);
             overflow: hidden;
         }
 
-        /* Ліва панель (Список + Пошук) */
+        /* ЧАСТКОВО ПРИХОВАНЕ ЛІВЕ МЕНЮ (Peek Rail + GPU Slide) */
         .post-sidebar {
-            width: 380px;
-            background: rgba(10, 10, 15, 0.6);
-            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: var(--sidebar-width);
+            max-width: 92vw;
+            height: calc(100vh - 70px);
+            background: rgba(9, 9, 14, 0.94);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 16px 0 48px rgba(0, 0, 0, 0.55);
+            z-index: 20;
+            display: flex;
+            transform: translateX(calc(-100% + var(--peek-width)));
+            transition: transform 280ms var(--ease-out), border-color 200ms var(--ease-out);
+            will-change: transform;
+        }
+
+        /* Відкривається при наведенні, фокусі всередині або закріпленні */
+        .post-sidebar:hover,
+        .post-sidebar:focus-within,
+        .post-sidebar.pinned {
+            transform: translateX(0);
+            border-right-color: rgba(204, 33, 195, 0.35);
+        }
+
+        .sidebar-main-col {
+            width: calc(100% - var(--peek-width));
             display: flex;
             flex-direction: column;
-            flex-shrink: 0;
+            height: 100%;
+            overflow: hidden;
         }
 
         .search-box {
-            padding: 20px;
+            padding: 16px 18px;
             border-bottom: 1px solid var(--border-color);
         }
 
@@ -85,85 +181,175 @@
             width: 100%;
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border-color);
-            padding: 12px 18px;
-            border-radius: 12px;
+            padding: 11px 15px;
+            border-radius: 10px;
             color: #fff;
             font-family: inherit;
             font-size: 14px;
             outline: none;
-            transition: 0.3s;
+            transition: border-color 180ms var(--ease-out), background-color 180ms var(--ease-out);
         }
-        .search-input:focus { border-color: rgba(204, 33, 195, 0.6); background: rgba(255, 255, 255, 0.07); }
+        .search-input:focus {
+            border-color: rgba(204, 33, 195, 0.65);
+            background: rgba(255, 255, 255, 0.07);
+        }
 
         .posts-list {
             overflow-y: auto;
-            padding: 20px;
+            padding: 14px 16px 24px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             flex-grow: 1;
         }
 
         .post-item {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            padding: 18px;
-            border-radius: 14px;
+            padding: 14px 16px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            text-align: left;
+            color: inherit;
+            font-family: inherit;
+            transition: background-color 180ms var(--ease-out), border-color 180ms var(--ease-out), transform 140ms var(--ease-out);
         }
+        .post-item:hover {
+            background: var(--card-hover);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .post-item:active { transform: scale(0.985); }
 
-        .post-item:hover { background: var(--card-hover); border-color: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
-        
         .post-item.active {
-            background: rgba(100, 26, 161, 0.15);
-            border-color: rgba(204, 33, 195, 0.5);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            background: rgba(100, 26, 161, 0.18);
+            border-color: rgba(204, 33, 195, 0.55);
         }
 
         .post-meta-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 8px;
             font-size: 11px;
             color: var(--text-muted);
             margin-bottom: 6px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.06em;
+            font-variant-numeric: tabular-nums;
         }
 
         .post-tag {
-            background: rgba(255,255,255,0.06);
+            background: rgba(255, 255, 255, 0.06);
             padding: 2px 8px;
             border-radius: 6px;
             font-size: 10px;
             color: #d1d5db;
+            white-space: nowrap;
         }
 
         .post-item h4 {
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 500;
             color: #fff;
-            line-height: 1.4;
+            line-height: 1.38;
         }
 
-        /* Права панель (Детальний контент) */
+        /* Видима смужка-напрямна праворуч у боковій панелі (56px) */
+        .sidebar-peek-rail {
+            width: var(--peek-width);
+            height: 100%;
+            border-left: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(6, 6, 10, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 14px 0;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .pin-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            font-size: 14px;
+            margin-bottom: 6px;
+            transition: color 180ms var(--ease-out), background-color 180ms var(--ease-out), border-color 180ms var(--ease-out), transform 140ms var(--ease-out);
+        }
+        .pin-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.09);
+            border-color: rgba(255, 255, 255, 0.22);
+        }
+        .pin-btn:active { transform: scale(0.95); }
+        .post-sidebar.pinned .pin-btn {
+            background: rgba(204, 33, 195, 0.22);
+            border-color: rgba(204, 33, 195, 0.6);
+            color: #fff;
+        }
+
+        .rail-numbers {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            overflow-y: auto;
+            width: 100%;
+            align-items: center;
+            padding: 4px 0;
+        }
+        .rail-numbers::-webkit-scrollbar { width: 0; }
+
+        .rail-dot {
+            width: 34px;
+            height: 28px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+            cursor: pointer;
+            transition: background-color 160ms var(--ease-out), color 160ms var(--ease-out), border-color 160ms var(--ease-out), transform 140ms var(--ease-out);
+        }
+        .rail-dot:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .rail-dot:active { transform: scale(0.94); }
+        .rail-dot.active {
+            background: var(--brand-gradient);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Права область читання (зручна ширина завдяки прихованому меню) */
         .post-content-area {
             flex-grow: 1;
-            padding: 50px 60px;
+            padding: 48px 48px 80px calc(var(--peek-width) + 48px);
             overflow-y: auto;
-            background: rgba(3, 3, 5, 0.3);
+            background: rgba(3, 3, 5, 0.28);
+            transition: padding-left 280ms var(--ease-out);
+        }
+
+        .content-layout.sidebar-pinned .post-content-area {
+            padding-left: calc(var(--sidebar-width) + 48px);
         }
 
         .content-box {
-            max-width: 850px;
+            max-width: 72ch;
             margin: 0 auto;
-            animation: fadeIn 0.4s ease;
+            animation: contentEnter 240ms var(--ease-out);
         }
 
-        .article-header {
-            margin-bottom: 30px;
-        }
+        .article-header { margin-bottom: 28px; }
 
         .article-category {
             display: inline-block;
@@ -172,114 +358,178 @@
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-bottom: 15px;
+            letter-spacing: 0.12em;
+            padding: 5px 13px;
+            border-radius: 999px;
+            margin-bottom: 16px;
         }
 
         .content-box h2 {
-            font-size: 38px;
+            font-size: clamp(28px, 3.4vw, 38px);
             font-weight: 600;
-            line-height: 1.2;
-            margin-bottom: 15px;
+            letter-spacing: -0.02em;
+            line-height: 1.18;
+            margin-bottom: 14px;
             color: #fff;
         }
 
         .article-info-bar {
             display: flex;
+            flex-wrap: wrap;
             gap: 20px;
             color: var(--text-muted);
             font-size: 13px;
-            margin-bottom: 30px;
+            font-variant-numeric: tabular-nums;
+            margin-bottom: 26px;
         }
 
         .article-image-container {
             position: relative;
-            margin-bottom: 35px;
-            border-radius: 20px;
+            margin-bottom: 32px;
+            border-radius: 18px;
             overflow: hidden;
             border: 1px solid var(--border-color);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.48);
+            background: linear-gradient(135deg, rgba(0, 72, 189, 0.25), rgba(100, 26, 161, 0.25));
+            min-height: 220px;
         }
 
         .content-box img {
             width: 100%;
-            height: 380px;
+            height: 340px;
             object-fit: cover;
             display: block;
+        }
+
+        .article-text {
+            max-width: 65ch;
         }
 
         .article-text p {
             font-size: 17px;
             color: var(--text-muted);
-            margin-bottom: 25px;
-            line-height: 1.8;
+            margin-bottom: 22px;
+            line-height: 1.78;
             font-weight: 300;
         }
 
+        .article-text p strong {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
         .article-text h3 {
-            font-size: 22px;
+            font-size: 21px;
+            letter-spacing: -0.01em;
             color: #fff;
-            margin: 35px 0 15px 0;
+            margin: 32px 0 14px;
             font-weight: 600;
         }
 
-        /* Стильні картки інструментів усередині статті */
         .tools-box {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-left: 4px solid #cc21c3;
-            padding: 25px;
-            border-radius: 0 16px 16px 0;
-            margin: 30px 0;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-left: 3px solid #cc21c3;
+            padding: 22px 24px;
+            border-radius: 0 14px 14px 0;
+            margin: 28px 0;
         }
 
         .tools-box h4 {
             color: #fff;
-            font-size: 16px;
+            font-size: 15px;
+            font-weight: 600;
             margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .tools-list {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 9px;
         }
 
         .tools-list li {
             font-size: 15px;
             color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            line-height: 1.6;
+            padding-left: 16px;
+            position: relative;
         }
-
         .tools-list li::before {
             content: '•';
+            position: absolute;
+            left: 0;
             color: #cc21c3;
-            font-weight: bold;
+            font-weight: 700;
+        }
+        .tools-list li strong {
+            color: #fff;
+            font-weight: 500;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        .article-nav-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+            max-width: 65ch;
+        }
+
+        .nav-step-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background-color 180ms var(--ease-out), border-color 180ms var(--ease-out), transform 140ms var(--ease-out);
+        }
+        .nav-step-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(204, 33, 195, 0.45);
+        }
+        .nav-step-btn:active:not(:disabled) { transform: scale(0.97); }
+        .nav-step-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        @keyframes contentEnter {
+            from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Скролбар */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .content-layout.sidebar-pinned .post-content-area {
+                padding-left: calc(var(--peek-width) + 24px);
+            }
+            .post-content-area {
+                padding: 32px 24px 64px calc(var(--peek-width) + 24px);
+            }
+        }
+
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.24); }
     </style>
 </head>
 <body>
 
-    <div class="bg-container">
+    <div class="grain-overlay" aria-hidden="true"></div>
+    <div class="bg-container" aria-hidden="true">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
     </div>
@@ -289,30 +539,36 @@
             <div class="logo-icon"></div>
             O S I N T — База знань
         </a>
-        <a href="index.html" class="back-link">← На головну</a>
+        <div class="header-actions">
+            <span class="counter-badge" id="topicCounter">01 / 12</span>
+            <a href="index.html" class="back-link">← На головну</a>
+        </div>
     </header>
 
-    <div class="content-layout">
-        <!-- Ліва панель -->
-        <div class="post-sidebar">
-            <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" placeholder="Пошук матеріалів..." onkeyup="filterPosts()">
+    <div class="content-layout" id="contentLayout">
+        <!-- Частково прихована ліва панель -->
+        <aside class="post-sidebar" id="postSidebar" aria-label="Список навчальних матеріалів">
+            <div class="sidebar-main-col">
+                <div class="search-box">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Пошук серед 12 матеріалів..." oninput="filterPosts()">
+                </div>
+                <div class="posts-list" id="postsList"></div>
             </div>
-            <div class="posts-list" id="postsList">
-                <!-- Заповнюється автоматично через JavaScript -->
-            </div>
-        </div>
 
-        <!-- Права панель -->
-        <div class="post-content-area">
-            <div class="content-box" id="postDisplay">
-                <!-- Контент активного допису -->
+            <!-- Видима смужка з номерами тем та кнопкою закріплення -->
+            <div class="sidebar-peek-rail">
+                <button type="button" class="pin-btn" id="pinBtn" title="Закріпити або згорнути меню" aria-label="Закріпити меню">⇄</button>
+                <div class="rail-numbers" id="railNumbers"></div>
             </div>
-        </div>
+        </aside>
+
+        <!-- Права панель читання -->
+        <main class="post-content-area" id="postScrollArea">
+            <div class="content-box" id="postDisplay"></div>
+        </main>
     </div>
 
     <script>
-        // Розширена база корисних матеріалів та інструментів
         const posts = [
             {
                 id: 0,
@@ -321,20 +577,18 @@
                 readTime: "4 хв читання",
                 date: "Жовтень 2026",
                 image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1350&q=80",
-                intro: "Кожне цифрове зображення зберігає величезний масив прихованої технічної інформації, яка здатна розповісти більше, ніж сама фотографія.",
+                intro: "Кожне цифрове зображення зберігає масив прихованої технічної інформації, яка здатна розповісти більше, ніж сам кадр.",
                 content: `
-                    <p>Коли ви робите знімок на смартфон або професійну камеру, файл записується у форматі JPEG або RAW і автоматично доповнюється EXIF-тегами. Для розвідки на основі відкритих джерел (OSINT) це золота жила.</p>
-                    <p>У метаданих часто містяться точні географічні координати (широта та довгота з точністю до метрів), модель пристрою, точний час зйомки за UTC, налаштування оптики та навіть унікальний серійний номер сенсора камери.</p>
-                    
-                    <h3>Поширені проблеми та нюанси</h3>
-                    <p>Популярні месенджери та соціальні мережі (Telegram, WhatsApp, Instagram, Facebook) під час надсилання або публікації фотографій автоматично стискають зображення та повністю видаляють EXIF-дані задля захисту приватності користувачів. Проте, якщо файл надіслано як «Документ» або електронною листом, оригінальні дані зазвичай залишаються недоторканими.</p>
-
+                    <p>Коли ви робите знімок на смартфон або камеру, файл записується у форматі JPEG чи RAW і автоматично доповнюється EXIF-тегами. Для розвідки на основі відкритих джерел це первинне джерело технічних доказів.</p>
+                    <p>У метаданих часто містяться точні GPS-координати, модель пристрою, точний час зйомки за UTC, параметри оптики та унікальний серійний номер сенсора.</p>
+                    <h3>Поширені нюанси передачі файлів</h3>
+                    <p>Популярні месенджери та соцмережі (Telegram, WhatsApp, Instagram) під час звичайного надсилання стискають зображення та очищують EXIF-теги. Проте якщо файл передано як «Документ» або електронним листом, оригінальні метадані зазвичай зберігаються.</p>
                     <div class="tools-box">
-                        <h4>Рекомендовані інструменти для роботи:</h4>
+                        <h4>Рекомендовані інструменти:</h4>
                         <ul class="tools-list">
-                            <li><strong>ExifTool (Phil Harvey)</strong> — найпотужніша консольна утиліта для читання та редагування метаданих.</li>
-                            <li><strong>Jeffrey’s Image Metadata Viewer</strong> — зручний онлайн-сервіс для швидкої перевірки файлів прямо у браузері.</li>
-                            <li><strong>FotoForensics</strong> — інструмент для аналізу помилок рівня (ELA) з метою виявлення слідів монтажу в графічних редакторах.</li>
+                            <li><strong>ExifTool</strong> — консольна утиліта для глибокого читання та аналізу метаданих будь-яких файлів.</li>
+                            <li><strong>Jeffrey’s Image Metadata Viewer</strong> — онлайн-сервіс для швидкої перевірки зображень у браузері.</li>
+                            <li><strong>FotoForensics</strong> — аналіз рівня стиснення (ELA) для виявлення слідів редагування.</li>
                         </ul>
                     </div>
                 `
@@ -346,21 +600,19 @@
                 readTime: "6 хв читання",
                 date: "Жовтень 2026",
                 image: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1350&q=80",
-                intro: "Як знайти точне місце зйомки кадру посеред великого міста або гірської місцевості, маючи лише візуальні орієнтири.",
+                intro: "Як знайти точне місце зйомки кадру посеред мегаполіса чи гірської місцевості, маючи лише візуальні орієнтири.",
                 content: `
-                    <p>Геолокація за відкритими джерелами — це поєднання логіки, дедукції та знання спеціалізованого софту. Коли цифрові координати відсутні, аналітик стає цифровим детективом.</p>
-                    <p>Процес починається з пошуку «якорів» — унікальних об'єктів на фоні: лінії електропередач особливої форми, силуети гірських хребтів, дорожні знаки, специфічні архітектурні елементи або назви магазинів на білбордах.</p>
-
-                    <h3>Основні етапи верифікації локації</h3>
-                    <p>1. <strong>Макро-орієнтири:</strong> Визначення регіону за кліматом, рослинністю, правилами дорожнього руху чи мовою на вивісках.<br>
-                    2. <strong>Мікро-орієнтири:</strong> Пошук точного ракурсу за допомогою панорамних знімків та супутникових мап високої деталізації.</p>
-
+                    <p>Геолокація за відкритими джерелами поєднує дедукцію, картографію та аналіз деталей довкілля. Коли координати відсутні у файлі, аналітик працює з візуальними підказками.</p>
+                    <p>Пошук починається з фіксації «якорів»: форми опор ЛЕП, силуетів гірських хребтів, дорожньої розмітки, типу архітектури або вивісок локального бізнесу.</p>
+                    <h3>Етапи верифікації локації</h3>
+                    <p><strong>1. Макро-орієнтири:</strong> визначення країни та регіону за кліматом, рослинністю, стандартами номерних знаків і мовою написів.<br>
+                    <strong>2. Мікро-орієнтири:</strong> звірка точного ракурсу будівлі через супутникові знімки та вуличні панорами.</p>
                     <div class="tools-box">
-                        <h4>Корисні сервіси для георозвідки:</h4>
+                        <h4>Сервіси для георозвідки:</h4>
                         <ul class="tools-list">
-                            <li><strong>Google Earth Pro</strong> — детальне 3D-моделювання міст і рельєфу місцевості.</li>
-                            <li><strong>SunCalc.org</strong> — аналіз положення сонця та довжини тіней для визначення точного часу зйомки або перевірки справжності відео.</li>
-                            <li><strong>PeakFinder</strong> — інструмент ідентифікації гірських вершин за панорамним профілем.</li>
+                            <li><strong>Google Earth Pro</strong> — 3D-моделювання міст, історичні супутникові знімки та вимірювання відстаней.</li>
+                            <li><strong>OpenStreetMap / Overpass Turbo</strong> — пошук об'єктів за специфічними комбінаціями ознак на мапі.</li>
+                            <li><strong>PeakFinder</strong> — ідентифікація гірських вершин за лінією горизонту.</li>
                         </ul>
                     </div>
                 `
@@ -372,17 +624,16 @@
                 readTime: "5 хв читання",
                 date: "Вересень 2026",
                 image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1350&q=80",
-                intro: "Методи перевірки присутності людини в різних соціальних мережах за допомогою унікальних логінів та імен користувачів.",
+                intro: "Методи перевірки присутності користувача на сотнях платформ за допомогою унікальних логінів та псевдонімів.",
                 content: `
-                    <p>Більшість людей використовують однакові або схожі нікнейми (username) на різних платформах: у месенджерах, на форумах, у професійних мережах чи ігрових сервісах. Це дозволяє зв'язати різні профілі в єдине цифрове досьє.</p>
-                    <p>Автоматизація такого пошуку зекономить години ручної роботи, перевіряючи сотні популярних сайтів за кілька секунд.</p>
-
+                    <p>Більшість користувачів повторно використовують однакові або схожі нікнейми на форумах, у месенджерах, репозиторіях коду та ігрових сервісах. Це дає змогу зіставити розрізнені профілі.</p>
+                    <p>Автоматизований перебір публічних URL-адрес профілів дозволяє за лічені секунди перевірити сотні платформ без втручання в захищені системи.</p>
                     <div class="tools-box">
-                        <h4>Програмне забезпечення для аналізу:</h4>
+                        <h4>Інструменти аналізу нікнеймів:</h4>
                         <ul class="tools-list">
-                            <li><strong>Sherlock</strong> — відкрита командна утиліта для пошуку аккаунтів за нікнеймом на більш ніж 400 сайтах.</li>
-                            <li><strong>WhatsMyName</strong> — веб-платформа для швидкої крос-платформенної перевірки імен користувачів.</li>
-                            <li><strong>Maltego</strong> — професійний комплекс для візуального зв'язування даних та побудови графів зв'язків.</li>
+                            <li><strong>Sherlock</strong> — утиліта з відкритим кодом для пошуку облікових записів за логіном на понад 400 сайтах.</li>
+                            <li><strong>WhatsMyName</strong> — веб-каталог для швидкої кросплатформної перевірки імен користувачів.</li>
+                            <li><strong>Maigret</strong> — розширений інструмент збору публічних метаданих із знайдених профілів.</li>
                         </ul>
                     </div>
                 `
@@ -394,94 +645,308 @@
                 readTime: "5 хв читання",
                 date: "Вересень 2026",
                 image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1350&q=80",
-                intro: "Як боротися з маніпуляціями в медіа, виявляти фейкові відеоматеріали та перевіряти першоджерела новин.",
+                intro: "Як розпізнавати маніпуляції в новинах, виявляти старі відео під виглядом свіжих і знаходити першоджерела.",
                 content: `
-                    <p>В умовах інформаційного шуму та швидкого поширення контенту навички критичного мислення та верифікації фактів є обов'язковими для кожного спеціаліста.</p>
-                    <p>Зворотний пошук зображень дозволяє дізнатися, коли фотографія з'явилася в мережі вперше. Часто «свіжа» кричуща новина виявляється репостом події п'ятирічної давнини з іншої країни.</p>
-
+                    <p>У сучасному інформаційному потоці критичне мислення та перевірка першоджерел є базовою навичкою інформаційної гігієни.</p>
+                    <p>Зворотний пошук зображень допомагає встановити дату першої публікації кадру. Дуже часто резонансне «сьогоднішнє» фото виявляється архівним знімком з іншої події.</p>
                     <div class="tools-box">
-                        <h4>Інструменти перевірки медіа:</h4>
+                        <h4>Інструменти верифікації медіа:</h4>
                         <ul class="tools-list">
-                            <li><strong>Google Lens / Reverse Search</strong> — базовий пошук схожих зображень та об'єктів.</li>
-                            <li><strong>TinEye</strong> — пошукова система по зображеннях, яка спеціалізується на знаходженні першоджерел фото.</li>
-                            <li><strong>InVID Verification Plugin</strong> — зручне розширення для браузера, створене для аналізу та розкадрування підозрілих відеороликів.</li>
+                            <li><strong>Google Lens / Зворотний пошук</strong> — пошук першоджерел та схожих фрагментів зображень.</li>
+                            <li><strong>TinEye</strong> — спеціалізований індекс зображень із сортуванням за датою найпершої появи.</li>
+                            <li><strong>InVID / WeVerify</strong> — розширення для браузера для розкадрування та перевірки відеороликів.</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: 4,
+                title: "Google Dorking: Просунуті оператори пошуку",
+                category: "Пошукові техніки",
+                readTime: "6 хв читання",
+                date: "Вересень 2026",
+                image: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=1350&q=80",
+                intro: "Як використовувати спеціальні команди пошукових систем для точного знаходження документів, звітів та відкритих індексів.",
+                content: `
+                    <p>Пошукові системи індексують набагато більше інформації, ніж показують за звичайним запитом. Оператори пошуку (Google Dorks) дозволяють фільтрувати результати за доменом, типом файлу чи словами в URL.</p>
+                    <p>Наприклад, комбінація <strong>site:gov.ua filetype:pdf "звіт"</strong> миттєво відбирає офіційні PDF-документи лише з державних веб-ресурсів.</p>
+                    <h3>Основні оператори для аналітика</h3>
+                    <p>Використовуйте <strong>site:</strong> для обмеження конкретного веб-сайту, <strong>filetype:</strong> (pdf, xlsx, docx, csv) для пошуку таблиць і документів, <strong>intitle:</strong> для слів у заголовку сторінки та <strong>"лапки"</strong> для точного збігу фрази.</p>
+                    <div class="tools-box">
+                        <h4>Корисні ресурси:</h4>
+                        <ul class="tools-list">
+                            <li><strong>Google Hacking Database (GHDB)</strong> — структурована база прикладів пошукових операторів.</li>
+                            <li><strong>DuckDuckGo Search Syntax</strong> — альтернативний пошуковий рушій із підтримкою операторів фільтрації.</li>
+                            <li><strong>IntelX (Intelligence X)</strong> — пошукова система для роботи з архівами, документами та публічними базами.</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: 5,
+                title: "Розвідка за доменами, DNS та WHOIS",
+                category: "Мережевий OSINT",
+                readTime: "6 хв читання",
+                date: "Серпень 2026",
+                image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1350&q=80",
+                intro: "Як дослідити інфраструктуру веб-сайту: історію реєстрації домену, DNS-записи, піддомени та SSL-сертифікати.",
+                content: `
+                    <p>Кожен веб-сайт спирається на технічну інфраструктуру: доменне ім'я, IP-адреси серверів, поштові шлюзи та криптографічні сертифікати. Аналіз цих записів допомагає виявити зв'язки між різними ресурсами.</p>
+                    <p>Навіть якщо власник приховав персональні дані у WHOIS через Privacy Protection, історичні записи та журнали прозорості SSL-сертифікатів часто розкривають пов'язані піддомени.</p>
+                    <div class="tools-box">
+                        <h4>Інструменти аналізу інфраструктури:</h4>
+                        <ul class="tools-list">
+                            <li><strong>crt.sh</strong> — пошук усіх виданих SSL/TLS-сертифікатів для виявлення піддоменів.</li>
+                            <li><strong>SecurityTrails</strong> — перегляд поточних та історичних DNS-записів (A, MX, NS, TXT).</li>
+                            <li><strong>Shodan / Censys</strong> — пошукові системи відкритих мережевих сервісів та конфігурацій серверів.</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: 6,
+                title: "Веб-архіви та відновлення видалених сторінок",
+                category: "Веб-архівація",
+                readTime: "4 хв читання",
+                date: "Серпень 2026",
+                image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1350&q=80",
+                intro: "Інформація в інтернеті рідко зникає безслідно: як переглядати попередні версії сайтів і фіксувати докази.",
+                content: `
+                    <p>Власники сайтів часто редагують або видаляють публікації після суспільного резонансу. Веб-архіви регулярно зберігають знімки сторінок у різні моменти часу, дозволяючи порівняти «до» і «після».</p>
+                    <p>Крім пошуку старих версій, дослідники самі створюють архівні копії важливих сторінок, щоб зафіксувати їхній стан на конкретну дату.</p>
+                    <div class="tools-box">
+                        <h4>Платформи веб-архівації:</h4>
+                        <ul class="tools-list">
+                            <li><strong>Wayback Machine (web.archive.org)</strong> — найбільший світовий архів веб-сторінок із календарем знімків.</li>
+                            <li><strong>archive.today</strong> — сервіс створення миттєвих незмінних копій веб-сторінок.</li>
+                            <li><strong>URLScan.io</strong> — сканер сайтів, який зберігає скріншот, DOM-структуру та мережеві запити сторінки.</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: 7,
+                title: "Аналіз електронної пошти та перевірка витоків",
+                category: "Цифрова безпека",
+                readTime: "5 хв читання",
+                date: "Серпень 2026",
+                image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1350&q=80",
+                intro: "Як перевірити, чи потрапляла поштова адреса у публічні витоки баз даних, та як читати службові заголовки листів.",
+                content: `
+                    <p>Електронна пошта залишається головним ідентифікатором для реєстрації на більшості онлайн-сервісів. Перевірка адреси за базами скомпрометованих сервісів допомагає оцінити ризики безпеки та вчасно змінити паролі.</p>
+                    <p>Водночас службові заголовки вхідного листа (<strong>Received, SPF, DKIM, DMARC</strong>) дозволяють перевірити, чи дійсно лист надійшов із заявленого домену, чи це фішингова підробка.</p>
+                    <div class="tools-box">
+                        <h4>Інструменти перевірки пошти:</h4>
+                        <ul class="tools-list">
+                            <li><strong>Have I Been Pwned</strong> — перевірка наявності email-адреси у відомих витоках баз даних.</li>
+                            <li><strong>Google Admin Toolbox Messageheader</strong> — візуальний аналізатор маршруту проходження листа.</li>
+                            <li><strong>Epieos</strong> — пошук публічних прив'язок облікових записів до електронної адреси.</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: 8,
+                title: "Хронолокація: Визначення часу за тінями та погодою",
+                category: "Гео та хронорозвідка",
+                readTime: "5 хв читання",
+                date: "Липень 2026",
+                image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1350&q=80",
+                intro: "Як встановити точну годину зйомки фото чи відео за кутом падіння сонячних тіней та архівними метеоданими.",
+                content: `
+                    <p>Навіть якщо метадані видалені, закони астрономії та метеорології залишаються незмінними. Коли відоме місце зйомки та дата, азимут сонця однозначно вказує на час доби.</p>
+                    <p>Вимірявши співвідношення висоти вертикального об'єкта (стовпа чи будівлі) до довжини його тіні на землі, аналітик обчислює кут висоти сонця над горизонтом.</p>
+                    <div class="tools-box">
+                        <h4>Інструменти хронолокації:</h4>
+                        <ul class="tools-list">
+                            <li><strong>SunCalc.org</strong> — інтерактивна карта траєкторії сонця та напрямку тіней для будь-якої точки й дати.</li>
+                            <li><strong>WolframAlpha</strong> — обчислення астрономічного положення сонця та погодних умов у минулому.</li>
+                            <li><strong>Ventusky / TimeAndDate</strong> — архіви погоди, хмарності та напрямку вітру за датами.</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: 9,
+                title: "Моніторинг транспорту: Авіа- та морський трекінг",
+                category: "Транспортний OSINT",
+                readTime: "5 хв читання",
+                date: "Липень 2026",
+                image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1350&q=80",
+                intro: "Як працюють відкриті сигнали транспондерів ADS-B та AIS, що дозволяють відстежувати літаки й судна в реальному часі.",
+                content: `
+                    <p>Цивільні повітряні судна передають радіосигнали <strong>ADS-B</strong> (координати, висоту, швидкість, позивний та унікальний ICAO-код борту), які приймають тисячі наземних ентузіастів по всьому світу.</p>
+                    <p>Аналогічно морські судна використовують систему <strong>AIS</strong>, передаючи свій MMSI-номер, курс, порт призначення та осадку.</p>
+                    <div class="tools-box">
+                        <h4>Платформи відкритого трекінгу:</h4>
+                        <ul class="tools-list">
+                            <li><strong>ADS-B Exchange</strong> — мережа нецензурованих даних польотів із фільтрацією за типом повітряних суден.</li>
+                            <li><strong>Flightradar24</strong> — зручний моніторинг комерційних рейсів та історії маршрутів бортів.</li>
+                            <li><strong>MarineTraffic / VesselFinder</strong> — глобальні карти руху морських і річкових суден.</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: 10,
+                title: "Аналіз соціальних мереж та графів зв'язків",
+                category: "SOCMINT",
+                readTime: "6 хв читання",
+                date: "Червень 2026",
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1350&q=80",
+                intro: "Систематизація відкритих даних із соцмереж та побудова візуальних схем взаємозв'язків між об'єктами.",
+                content: `
+                    <p>SOCMINT (Social Media Intelligence) зосереджується на аналізі публічних дописів, списків контактів, геоміток та часу активності профілів.</p>
+                    <p>Коли даних стає багато, текстові нотатки втрачають наочність. Побудова графів зв'язків дозволяє побачити спільні контакти, повторювані домени чи приховані кластери взаємодії.</p>
+                    <div class="tools-box">
+                        <h4>Інструменти візуалізації та SOCMINT:</h4>
+                        <ul class="tools-list">
+                            <li><strong>Maltego</strong> — середовище для побудови графів зв'язків між людьми, доменами, поштами та IP.</li>
+                            <li><strong>Gephi</strong> — програма з відкритим кодом для аналізу та візуалізації складних мережевих графів.</li>
+                            <li><strong>Obsidian Graph View</strong> — зручний інструмент для структурування нотаток розслідування локально.</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: 11,
+                title: "OPSEC: Операційна безпека дослідника",
+                category: "Кібергігієна",
+                readTime: "5 хв читання",
+                date: "Червень 2026",
+                image: "https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=1350&q=80",
+                intro: "Як захистити власну приватність під час проведення OSINT-досліджень та відокремити робоче середовище від особистого.",
+                content: `
+                    <p>Головне правило OPSEC (Operational Security) у розвідці відкритих джерел: ніколи не використовуйте особисті облікові записи, основний браузер чи домашню IP-адресу для перегляду підозрілих ресурсів.</p>
+                    <p>Багато веб-сайтів фіксують цифровий відбиток браузера (Canvas, WebGL, часовий пояс, список шрифтів), а соцмережі можуть рекомендувати ваш особистий профіль об'єкту дослідження.</p>
+                    <h3>Базовий чекліст безпеки</h3>
+                    <p>Використовуйте окремі профілі браузера або віртуальну машину, завантажуйте невідомі файли лише в ізольованому середовищі та перевіряйте посилання перед відкриттям через сервіси попереднього перегляду.</p>
+                    <div class="tools-box">
+                        <h4>Інструменти захисту та ізоляції:</h4>
+                        <ul class="tools-list">
+                            <li><strong>Firefox Multi-Account Containers</strong> — ізоляція файлів cookie та сесій для різних робочих профілів.</li>
+                            <li><strong>Cover Your Tracks (EFF)</strong> — перевірка рівня унікальності цифрового відбитка вашого браузера.</li>
+                            <li><strong>VirusTotal</strong> — попередня перевірка підозрілих URL-посилань і файлів перед відкриттям.</li>
                         </ul>
                     </div>
                 `
             }
         ];
 
-        // Рендер списку постів
+        let currentPostId = 0;
+        const sidebarEl = document.getElementById('postSidebar');
+        const layoutEl = document.getElementById('contentLayout');
+        const pinBtn = document.getElementById('pinBtn');
+
+        pinBtn.addEventListener('click', () => {
+            const isPinned = sidebarEl.classList.toggle('pinned');
+            layoutEl.classList.toggle('sidebar-pinned', isPinned);
+        });
+
+        function renderRail() {
+            const rail = document.getElementById('railNumbers');
+            rail.innerHTML = '';
+            posts.forEach(post => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `rail-dot ${post.id === currentPostId ? 'active' : ''}`;
+                btn.textContent = String(post.id + 1).padStart(2, '0');
+                btn.title = post.title;
+                btn.onclick = () => selectPost(post.id);
+                rail.appendChild(btn);
+            });
+        }
+
         function renderPosts(itemsToRender) {
             const listContainer = document.getElementById('postsList');
             listContainer.innerHTML = '';
 
             if (itemsToRender.length === 0) {
-                listContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 20px;">Нічого не знайдено</p>';
+                listContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 24px; font-size: 14px;">Нічого не знайдено</p>';
                 return;
             }
 
             itemsToRender.forEach(post => {
-                const div = document.createElement('div');
-                div.className = `post-item ${post.id === currentPostId ? 'active' : ''}`;
-                div.onclick = () => selectPost(post.id);
-                div.innerHTML = `
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `post-item ${post.id === currentPostId ? 'active' : ''}`;
+                btn.onclick = () => selectPost(post.id);
+                btn.innerHTML = `
                     <div class="post-meta-info">
-                        <span>${post.date}</span>
+                        <span>${String(post.id + 1).padStart(2, '0')} · ${post.date}</span>
                         <span class="post-tag">${post.category}</span>
                     </div>
                     <h4>${post.title}</h4>
                 `;
-                listContainer.appendChild(div);
+                listContainer.appendChild(btn);
             });
         }
 
-        let currentPostId = 0;
+        function getFilteredPosts() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!query) return posts;
+            return posts.filter(p =>
+                p.title.toLowerCase().includes(query) ||
+                p.category.toLowerCase().includes(query) ||
+                p.intro.toLowerCase().includes(query)
+            );
+        }
+
+        function filterPosts() {
+            renderPosts(getFilteredPosts());
+        }
 
         function selectPost(id) {
             currentPostId = id;
-            const post = posts.find(p => p.id === id);
-            
-            // Оновлюємо підсвітку в списку
-            renderPosts(posts);
-            const searchInputVal = document.getElementById('searchInput').value;
-            if(searchInputVal) filterPosts(); // Зберігаємо фільтр при кліку
+            const post = posts.find(p => p.id === id) || posts[0];
 
-            // Відображаємо контент
+            renderPosts(getFilteredPosts());
+            renderRail();
+
+            document.getElementById('topicCounter').textContent =
+                `${String(post.id + 1).padStart(2, '0')} / ${String(posts.length).padStart(2, '0')}`;
+
             const display = document.getElementById('postDisplay');
+            display.style.animation = 'none';
+            display.offsetHeight;
+            display.style.animation = '';
+
             display.innerHTML = `
                 <div class="article-header">
                     <span class="article-category">${post.category}</span>
                     <h2>${post.title}</h2>
                     <div class="article-info-bar">
-                        <span>📅 ${post.date}</span>
-                        <span>⏱️ ${post.readTime}</span>
+                        <span>Модуль ${String(post.id + 1).padStart(2, '0')} з ${posts.length}</span>
+                        <span>·</span>
+                        <span>${post.date}</span>
+                        <span>·</span>
+                        <span>${post.readTime}</span>
                     </div>
                 </div>
                 <div class="article-image-container">
-                    <img src="${post.image}" alt="${post.title}">
+                    <img src="${post.image}" alt="${post.title}" onerror="this.style.display='none'">
                 </div>
                 <div class="article-text">
                     <p><strong>${post.intro}</strong></p>
                     ${post.content}
                 </div>
+                <div class="article-nav-footer">
+                    <button type="button" class="nav-step-btn" ${post.id === 0 ? 'disabled' : ''} onclick="selectPost(${post.id - 1})">
+                        ← Попередня тема
+                    </button>
+                    <button type="button" class="nav-step-btn" ${post.id === posts.length - 1 ? 'disabled' : ''} onclick="selectPost(${post.id + 1})">
+                        Наступна тема →
+                    </button>
+                </div>
             `;
-            display.scrollTop = 0;
+
+            document.getElementById('postScrollArea').scrollTop = 0;
+            history.replaceState(null, '', `#post-${post.id}`);
         }
 
-        function filterPosts() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = posts.filter(p => 
-                p.title.toLowerCase().includes(query) || 
-                p.category.toLowerCase().includes(query) ||
-                p.intro.toLowerCase().includes(query)
-            );
-            renderPosts(filtered);
-        }
-
-        // Ініціалізація сторінки при завантаженні
-        renderPosts(posts);
-        selectPost(0);
+        const hashMatch = window.location.hash.match(/^#post-(\d+)$/);
+        const initialId = hashMatch ? Math.min(Math.max(parseInt(hashMatch[1], 10), 0), posts.length - 1) : 0;
+        selectPost(initialId);
     </script>
 </body>
 </html>
